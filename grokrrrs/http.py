@@ -8,7 +8,7 @@ import urllib2
 module_logger = logging.getLogger('groknator.grokrrrs.http')
 
 DEFAULTHEADERS = {
-    'User-Agent' : 'Groknator/0.1 (+https://github.com/paregorios/groknator)',
+    'User-Agent' : 'GroknatorHTTPGrokrrrbot/0.1 (+https://github.com/paregorios/groknator)',
 }
 
 
