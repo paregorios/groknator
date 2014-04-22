@@ -4,8 +4,8 @@
 from base import BaseGrokrrr
 from bs4 import BeautifulSoup
 from http import HTTPGrokrrr
+from indexers.markup import ElementIndexer, AttributeIndexer, RDFaIndexer, MetaIndexer
 import logging
-import re
 import urllib2
 
 HTMLMIMETYPES = [
@@ -64,51 +64,17 @@ class HTMLGrokrrr(BaseGrokrrr, HTTPGrokrrr):
         ei = ElementIndexer()
         self.html['elements'] = ei.index(soup)
         # index attributes
+        ai = AttributeIndexer(ei)
+        self.html['attributes'] = ai.index(soup)
         # index words
         # index meta tags
+        mi = MetaIndexer()
+        self.meta = mi.index(soup, self.http['urlgot'])
         # index schema.org microdata
+        # open graph?
         # index rdfa microdata
+        ri = RDFaIndexer(attribute_indexer=ai)
+        self.rdfa = ri.index(soup)
         # identify alternate formats referenced in links
         # what is @rel attribute and how to capture?
-
-class HTMLIndexer:
-    """
-    basic indexer class ClassName(object):
-    """
-
-    def __init__(self):
-        pass
-
-class ElementIndexer(HTMLIndexer):
-    """
-    foo
-    """
-
-    def __init__(self):
-        self.logger = logging.getLogger('groknator.grokrrrs.html.ElementIndexer')
-        HTMLIndexer.__init__(self)
-
-    def index(self, soup):
-        logger = self.logger
-        elements = {}
-        tagnames = set([t.name.strip() for t in soup.find_all(True)])
-        for tagname in tagnames:
-            elements[tagname] = {}
-            tags = soup.find_all(tagname)
-            elements[tagname]['count'] = len(tags)
-            elements[tagname]['instances'] = []
-            for tag in tags:
-                ele = {}
-                ele['attributes'] = []
-                for a in sorted(tag.attrs.keys()):
-                    val = tag.attrs[a]
-                    if type(val) is list:
-                        val = u' '.join(val)
-                    p = re.compile(u'\s+')
-                    val = p.sub(u' ', val).strip()
-                    ele['attributes'].append({a:val})
-                elements[tagname]['instances'].append(ele)
-        logger.debug("elements: %s" % sorted(elements.keys()))
-        return elements
-
 

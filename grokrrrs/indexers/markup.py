@@ -56,6 +56,13 @@ class ElementIndexer(MarkupIndexer):
                     p = re.compile(u'\s+')
                     val = p.sub(u' ', val).strip()
                     ele['attributes'][a] = val
+                t = tag.get_text()
+                t = u''.join(t)
+                p = re.compile('\s+')
+                t = p.sub(u' ', t)
+                t = t.strip()
+                if len(t) > 0:
+                    ele['text'] = t
                 elements[tagname]['instances'].append(ele)
         logger.debug("elements: %s" % sorted(elements.keys()))
         self.elements = elements
@@ -67,7 +74,7 @@ class AttributeIndexer(MarkupIndexer):
     """
 
     def __init__(self, element_indexer=None):
-        self.logger = logging.getLogger('groknator.grokrrrs.html.ElementIndexer')
+        self.logger = logging.getLogger('groknator.grokrrrs.html.AttributeIndexer')
         MarkupIndexer.__init__(self)
         try:
             self.ei = element_indexer
@@ -95,11 +102,25 @@ class AttributeIndexer(MarkupIndexer):
             kwt = "%s" % attribute
             logger.debug("kwt: '%s'" % kwt)
             d[kwt] = []
-            attrtags = soup.find_all(True, args={kwt : True})
+            try:
+                attrtags = soup.find_all(True, **{kwt : True})
+            except TypeError:
+                attrtags = soup.find_all(True)
+                attrtags = [attrtag for attrtag in attrtags if kwt in attrtag.attrs.keys()]
             for attrtag in attrtags:
-                dattr = {'element': attrtag.name.strip(), 'value': unicode(attrtag[attribute]).strip()}
+                attrtagname = attrtag.name
+                logger.debug("attrtagname: %s" % attrtagname)
+                attrtagvalue = attrtag[attribute]
+                logger.debug("attrtagvalue: %s" % attrtagvalue)
+                if type(attrtagvalue) == list:
+                    attrtagvalue = u' '.join(attrtagvalue)
+                p = re.compile('\s+')
+                attrtagvalue = p.sub(u' ', attrtagvalue)
+                dattr = {'element': attrtagname.strip(), 'value': attrtagvalue.strip()}
                 d[kwt].append(dattr)
-        self.logger.debug("attributes: %s" % sorted(d.keys()))
+        logger.debug("attributes: %s" % sorted(d.keys()))
+        for attr in sorted(d.keys()):
+            logger.debug("%s = '%s'" % (attr, d[attr]))
         self.attributes = d
         return d
 
