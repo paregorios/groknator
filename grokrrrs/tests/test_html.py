@@ -31,6 +31,9 @@ def test_html_fetch():
         h = g.html
         # Beautiful Soup gets invoked on the content, and the result stored on the object
         assert_equals('soup' in h.keys(), True)
+        # store just text nodes as pure text
+        assert_equals('puretext' in dir(g), True)
+        assert_equals(g.puretext, 'foo')
         # There should be indexes on the object of all elements and all attributes in the soup
         assert_equals('elements' in h.keys(), True)
         assert_equals('attributes' in h.keys(), True)

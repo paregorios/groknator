@@ -44,7 +44,7 @@ def test_http_fetch():
         assert_equals('text/html;charset=utf-8', h['response_headers']['content-type'])
         # fetch stashes the raw content as well
         assert_equals('rawcontent' in dir(g), True)
-        assert_equals(type(g.rawcontent), str)
+        assert_equals(type(g.rawcontent), str) # compare text.fetch(), which stores rawcontent as unicode
 
 
 
