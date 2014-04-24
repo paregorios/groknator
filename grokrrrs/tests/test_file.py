@@ -28,11 +28,13 @@ def test_textfile_get():
     if g is not None:
         here = os.path.dirname(os.path.realpath(__file__))
         filepath = os.path.join(here, 'data', 'lorem-ipsum-utf8.html')
+        # todo: tests for other file encodings
         g.get(filepath)
         f = g.file
         # fetch stashes the raw content as well
         assert_equals('rawcontent' in dir(g), True)
         assert_equals(type(g.rawcontent), unicode) # compare http.fetch(), which stores rawcontent as str
+        assert_equals('documenturl' in dir(g), True)
 
 
 

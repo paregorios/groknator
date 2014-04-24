@@ -85,6 +85,8 @@ class TextFileGrokrrr(BaseGrokrrr):
                 raise
         inf.close()
         self.rawcontent = data
+        self.documenturl = 'file://' + self.file['pathgot'].replace(os.pathsep, '/')
+
 
 
 

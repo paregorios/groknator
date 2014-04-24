@@ -217,33 +217,37 @@ class MetaIndexer(MarkupIndexer):
             metatags = self.ei.index(soup)['meta']['instances']
         except:
             self.ei = ElementIndexer()
-            metatags = self.ei.index(soup)['meta']['instances']
 
-        if len(metatags) > 0:
-            logger.debug("metatags: %s" % len(metatags))
-            properties = {}
-            namespace = document_url
-            namedmetas = []
-            for tag in metatags:
-                if 'name' in tag['attributes'].keys():
-                    namedmetas.append(tag)
-                elif 'http-equiv' in tag['attributes'].keys():
-                    namedmetas.append(tag)
-                    z = tag['attributes']['http-equiv']
-                    namedmetas[-1]['attributes']['name'] = z
-            for tag in namedmetas:
-                logger.debug("meta: %s" % tag)
-                pkey = '#'.join((namespace, tag['attributes']['name']))
-                pval = tag['attributes']['content'].strip()
-                if pkey in properties.keys():
-                        properties[pkey].append(pval)
-                else:
-                    properties[pkey] = [pval, ]
-            for k in sorted(properties.keys()):
-                logger.debug("property: %s = %s" % (k, properties[k]))
-            return properties
-        else:
+        try:
+            metatags = self.ei.index(soup)['meta']['instances']
+        except KeyError:
             logger.info("no meta tags detected")
+        else:
+            if len(metatags) > 0:
+                logger.debug("metatags: %s" % len(metatags))
+                properties = {}
+                namespace = document_url
+                namedmetas = []
+                for tag in metatags:
+                    if 'name' in tag['attributes'].keys():
+                        namedmetas.append(tag)
+                    elif 'http-equiv' in tag['attributes'].keys():
+                        namedmetas.append(tag)
+                        z = tag['attributes']['http-equiv']
+                        namedmetas[-1]['attributes']['name'] = z
+                for tag in namedmetas:
+                    logger.debug("meta: %s" % tag)
+                    pkey = '#'.join((namespace, tag['attributes']['name']))
+                    pval = tag['attributes']['content'].strip()
+                    if pkey in properties.keys():
+                            properties[pkey].append(pval)
+                    else:
+                        properties[pkey] = [pval, ]
+                for k in sorted(properties.keys()):
+                    logger.debug("property: %s = %s" % (k, properties[k]))
+                return properties
+            else:
+                logger.info("no meta tags detected")
 
 
 

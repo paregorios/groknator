@@ -45,6 +45,7 @@ def test_http_fetch():
         # fetch stashes the raw content as well
         assert_equals('rawcontent' in dir(g), True)
         assert_equals(type(g.rawcontent), str) # compare text.fetch(), which stores rawcontent as unicode
+        assert_equals('documenturl' in dir(g), True)
 
 
 

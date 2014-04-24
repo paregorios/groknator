@@ -58,4 +58,5 @@ class HTTPGrokrrr(BaseGrokrrr):
         for k in sorted(rheaders.keys()):            
             logger.debug("response header %s: '%s'" % (k, rheaders[k]))
             self.http['response_headers'][k.strip().lower()] = rheaders[k].strip()        
+        self.documenturl = urlgot
         self.rawcontent = rawcontent
